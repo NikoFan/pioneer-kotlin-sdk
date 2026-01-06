@@ -36,8 +36,9 @@ android {
 
 dependencies {
     // ✅ ОСТАВЛЯЕМ ТОЛЬКО ЭТО:
-    implementation("io.dronefleet.mavlink:mavlink:1.1.11")
+    // implementation("io.dronefleet.mavlink:mavlink:1.1.11")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+
 
 
     // Тесты — можно оставить (опционально):

@@ -45,6 +45,9 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
 
+    // Обязательно добавь:
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
+
     // Тесты — можно оставить
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
