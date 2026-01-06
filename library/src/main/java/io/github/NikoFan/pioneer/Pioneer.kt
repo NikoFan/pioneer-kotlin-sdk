@@ -36,20 +36,20 @@ class Pioneer(
     /**
      * Взлёт на высоту, заданную в настройках автопилота.
      */
-    suspend fun takeoff(): Boolean = connection.takeoff()
-
-    /**
-     * Посадка.
-     */
-    suspend fun land(): Boolean = connection.land()
-
-    /**
-     * Полёт в точку в локальной системе координат (NED).
-     * @param x, y, z — координаты в метрах. Z — вниз (NED), поэтому передаётся как -z.
-     * @param yaw — угол рысканья в радианах.
-     */
-    suspend fun goToLocalPoint(x: Float, y: Float, z: Float, yaw: Float = 0f): Boolean =
-        connection.goToLocalPoint(x, y, z, yaw)
+//    suspend fun takeoff(): Boolean = connection.takeoff()
+//
+//    /**
+//     * Посадка.
+//     */
+//    suspend fun land(): Boolean = connection.land()
+//
+//    /**
+//     * Полёт в точку в локальной системе координат (NED).
+//     * @param x, y, z — координаты в метрах. Z — вниз (NED), поэтому передаётся как -z.
+//     * @param yaw — угол рысканья в радианах.
+//     */
+//    suspend fun goToLocalPoint(x: Float, y: Float, z: Float, yaw: Float = 0f): Boolean =
+//        connection.goToLocalPoint(x, y, z, yaw)
 
     /**
      * Закрывает соединение с дроном.
@@ -63,8 +63,8 @@ class Pioneer(
      */
     fun isConnected(): Boolean = connection.isConnected()
 
-    companion object {
-        const val SYSTEM_ID = 1
-        const val COMPONENT_ID = 1
-    }
+//    companion object {
+//        const val SYSTEM_ID = 1
+//        const val COMPONENT_ID = 1
+//    }
 }
