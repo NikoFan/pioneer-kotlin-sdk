@@ -38,11 +38,11 @@ class Pioneer(
      */
 //    suspend fun takeoff(): Boolean = connection.takeoff()
 //
-//    /**
-//     * Посадка.
-//     */
-//    suspend fun land(): Boolean = connection.land()
-//
+    /**
+     * Посадка.
+     */
+    suspend fun land(): Boolean = connection.land()
+
 //    /**
 //     * Полёт в точку в локальной системе координат (NED).
 //     * @param x, y, z — координаты в метрах. Z — вниз (NED), поэтому передаётся как -z.

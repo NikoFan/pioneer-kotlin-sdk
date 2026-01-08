@@ -28,16 +28,21 @@ class MainActivity : AppCompatActivity() {
 
             if (armSuccess) {
                 Log.d("PioneerApp", "✅ Двигатели ЗАПУЩЕНЫ (ARM). Ждём 3 секунды...")
-                delay(3000)
+                delay(5000)
 
-                Log.d("PioneerApp", "🛑 Выполняем DISARM (остановка двигателей)...")
-                val disarmSuccess = pioneer.disarm()
-                Log.d("PioneerApp", "Результат DISARM: $disarmSuccess")
 
-                if (disarmSuccess) {
-                    Log.d("PioneerApp", "✅ Двигатели ОСТАНОВЛЕНЫ. Тест завершён успешно.")
+
+//                Log.d("PioneerApp", "🛑 Выполняем DISARM (остановка двигателей)...")
+//                val disarmSuccess = pioneer.disarm()
+
+                Log.d("PioneerApp", "🛬 Выполняем посадку (LAND)...")
+                val landSuccess = pioneer.land() // ← ИСПОЛЬЗУЙ LAND ВМЕСТО DISARM
+                Log.d("PioneerApp", "Результат LAND: $landSuccess")
+
+                if (landSuccess) {
+                    Log.d("PioneerApp", "✅ Посадка Произведена. Двигатели остановлены. Тест завершён успешно.")
                 } else {
-                    Log.e("PioneerApp", "⚠️ Ошибка при DISARM!")
+                    Log.e("PioneerApp", "⚠️ Ошибка при LAND!")
                 }
             } else {
                 Log.e("PioneerApp", "❌ Не удалось выполнить ARM!")

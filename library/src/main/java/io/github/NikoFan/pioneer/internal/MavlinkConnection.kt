@@ -39,29 +39,48 @@ internal class MavlinkConnection(
         return sendPacket(armPacket)
     }
 
+    suspend fun land(): Boolean {
+        val landPacket = byteArrayOf(
+            0xfe.toByte(), 0x21, 0x02, -0x01, 0x00, 0x4c,
+            0x00, 0x00, 0x00, 0x00, // param1 = 0
+            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            0x15.toByte(), 0x00.toByte(), // command = 21 (MAV_CMD_NAV_LAND)
+            0x00, // target_system = 0
+            0x00,
+            0x00,
+            -0x1c, -0x3f // CRC для LAND
+        )
+        return sendPacket(landPacket)
+    }
+
     suspend fun disarm(): Boolean {
         val disarmPacket = byteArrayOf(
-            0xfe.toByte(),
-            0x21,
-            0x01,
-            -0x01,
-            0x00,
-            0x4c,
+            0xfe.toByte(),  // start
+            0x21,           // payload len = 33
+            0x01,           // sequence
+            -0x01,          // system_id = 255 (GCS)
+            0x00,           // component_id = 0
+            0x4c,           // COMMAND_LONG
 
             0x00, 0x00, 0x00, 0x00, // param1 = 0.0
-            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, // param2 = 0
             0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00,
 
-            0x90.toByte(), 0x01.toByte(),
-            0x00,
-            0x00,
-            0x00,
+            0x90.toByte(), 0x01.toByte(), // command = 400
+            0x00, // ← target_system = 0 (как в ARM!)
+            0x00, // ← target_component = 0 (как в ARM!)
+            0x00, // confirmation = 0
 
-            0x1a, -0x3f // ✅ Правильный CRC для disarm (рассчитан по алгоритму)
+            -0x77, -0x3f // ← CRC = 89c1 (тот же, что и в ARM!)
         )
         return sendPacket(disarmPacket)
     }
