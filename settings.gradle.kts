@@ -20,6 +20,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "pioneer-kotlin"
+rootProject.name = "pioneer-kotlin-sdk"
 include(":example")
 include(":library")
