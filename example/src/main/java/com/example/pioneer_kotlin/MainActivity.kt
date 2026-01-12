@@ -15,43 +15,47 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        pioneer = Pioneer(
+            ip = "192.168.4.1",
+            mavlinkPort = 8001,
+            logger = true
+        )
 
-        pioneer = Pioneer(ip = "192.168.4.1", mavlinkPort = 8001, logger = true)
-
-        // Запускаем в фоновом потоке!
         lifecycleScope.launch(Dispatchers.IO) {
             Log.d("PioneerApp", "Подключён к дрону: ${pioneer.isConnected()}")
-            Log.d("PioneerApp", "✅ Начинаем тест: ЗАПУСК двигателей (ARM)...")
+            Log.d("PioneerApp", "✅ Начинаем тест: ARM...")
 
             val armSuccess = pioneer.arm()
             Log.d("PioneerApp", "Результат ARM: $armSuccess")
+            Log.d("Logs", pioneer.getLogs().joinToString("\n"))
 
             if (armSuccess) {
-                Log.d("PioneerApp", "✅ Двигатели ЗАПУЩЕНЫ (ARM). Ждём 3 секунды...")
-                delay(5000)
+                Log.d("PioneerApp", "✅ Двигатели ЗАПУЩЕНЫ. Ждём 3 сек...")
+                delay(3000)
 
+                Log.d("PioneerApp", "🛑 Выполняем DISARM...")
+                val disarmSuccess = pioneer.disarm()
+                Log.d("Logs", pioneer.getLogs().joinToString("\n"))
+                Log.d("PioneerApp", "Результат DISARM: $disarmSuccess")
 
-
-//                Log.d("PioneerApp", "🛑 Выполняем DISARM (остановка двигателей)...")
-//                val disarmSuccess = pioneer.disarm()
-
-                Log.d("PioneerApp", "🛬 Выполняем посадку (LAND)...")
-                val landSuccess = pioneer.land() // ← ИСПОЛЬЗУЙ LAND ВМЕСТО DISARM
-                Log.d("PioneerApp", "Результат LAND: $landSuccess")
-
-                if (landSuccess) {
-                    Log.d("PioneerApp", "✅ Посадка Произведена. Двигатели остановлены. Тест завершён успешно.")
+                if (disarmSuccess) {
+                    Log.d("PioneerApp", "✅ Двигатели ОСТАНОВЛЕНЫ.")
+                    Log.d("Logs", pioneer.getLogs().joinToString("\n"))
                 } else {
-                    Log.e("PioneerApp", "⚠️ Ошибка при LAND!")
+                    Log.e("PioneerApp", "❌ Ошибка при DISARM!")
+                    Log.d("Logs", pioneer.getLogs().joinToString("\n"))
                 }
             } else {
                 Log.e("PioneerApp", "❌ Не удалось выполнить ARM!")
+                Log.d("Logs", pioneer.getLogs().joinToString("\n"))
             }
         }
     }
+
 
     override fun onDestroy() {
         pioneer.close()
         super.onDestroy()
     }
+
 }

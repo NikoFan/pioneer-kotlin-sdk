@@ -13,6 +13,9 @@ class Pioneer(
 
     suspend fun arm(): Boolean = withContext(Dispatchers.IO) { connection.arm() }
     suspend fun disarm(): Boolean = withContext(Dispatchers.IO) { connection.disarm() }
+    suspend fun takeoff() = withContext(Dispatchers.IO) { connection.takeoff() }
+    suspend fun land() = withContext(Dispatchers.IO) { connection.land() }
+    fun getLogs() = connection.getFlightLogs()
 
     fun close() = Unit
     fun isConnected() = true

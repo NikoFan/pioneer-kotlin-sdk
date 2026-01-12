@@ -1,17 +1,21 @@
+# Минимальная версия CMake
 cmake_minimum_required(VERSION 3.22.1)
+
+# Название проекта (совпадает с именем .so файла)
 project("drone_controller")
 
-# путь к заголовкам
+# Добавление папки mavlink как include-директорию
 include_directories(mavlink)
 
-# Создаём нативную библиотеку
+# Создание нативной библиотеки SHARED (.so)
+# Имя "drone_controller" должно совпадать с System.loadLibrary("drone_controller") в Kotlin
 add_library(
         drone_controller
         SHARED
         drone_controller.cpp
 )
 
-# Подключаем системные библиотеки
+# Подключение системных библиотек Android: log и android
 find_library(log-lib log)
 find_library(android-lib android)
 

@@ -67,7 +67,7 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 groupId = "com.github.NikoFan"       // ← GitHub username
                 artifactId = "pioneer-kotlin"       // ← имя репозитория
-                version = "1.0.0"                   // ← версия (лучше указывать в теге)
+                // version = "1.0.0"                   // ← версия (лучше указывать в теге)
 
                 from(components["release"])
             }
