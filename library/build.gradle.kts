@@ -66,21 +66,18 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 groupId = "com.github.NikoFan"
                 artifactId = "pioneer-kotlin-sdk"
+                // version НЕ указываем — берётся из тега
 
-                // Явно указываем компонент
-                afterEvaluate {
-                    from(components["release"])
-                }
+                from(components["release"]) // ← УБРАТЬ ВЛОЖЕННЫЙ afterEvaluate!
 
-                // Добавляем pom-информацию (обязательно для JitPack)
                 pom {
                     name.set("Pioneer Kotlin SDK")
                     description.set("Kotlin SDK for GEOSCAN Pioneer Mini drone")
-                    url.set("https://github.com/NikoFan/pioneer-kotlin-sdk")
+                    url.set("https://github.com/NikoFan/pioneer-kotlin-sdk") // ← УБРАТЬ ПРОБЕЛЫ!
                     licenses {
                         license {
                             name.set("MIT License")
-                            url.set("https://opensource.org/licenses/MIT")
+                            url.set("https://opensource.org/licenses/MIT") // ← УБРАТЬ ПРОБЕЛЫ!
                         }
                     }
                     developers {
@@ -90,9 +87,9 @@ afterEvaluate {
                         }
                     }
                     scm {
-                        connection.set("scm:git:github.com/NikoFan/pioneer-kotlin-sdk.git")
-                        developerConnection.set("scm:git:ssh://github.com/NikoFan/pioneer-kotlin-sdk.git")
-                        url.set("https://github.com/NikoFan/pioneer-kotlin-sdk")
+                        connection.set("scm:git:github.com:NikoFan/pioneer-kotlin-sdk.git")
+                        developerConnection.set("scm:git:ssh://github.com:NikoFan/pioneer-kotlin-sdk.git")
+                        url.set("https://github.com/NikoFan/pioneer-kotlin-sdk") // ← УБРАТЬ ПРОБЕЛЫ!
                     }
                 }
             }
