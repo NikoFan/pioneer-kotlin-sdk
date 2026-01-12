@@ -60,16 +60,41 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 }
 
-// === ПУБЛИКАЦИЯ ДЛЯ JITPACK ===
 afterEvaluate {
     publishing {
         publications {
             create<MavenPublication>("release") {
-                groupId = "com.github.NikoFan"       // ← GitHub username
-                artifactId = "pioneer-kotlin-sdk"       // ← имя репозитория
-                // version = "1.1.5"                   // ← версия (лучше указывать в теге)
+                groupId = "com.github.NikoFan"
+                artifactId = "pioneer-kotlin-sdk"
 
-                from(components["release"])
+                // Явно указываем компонент
+                afterEvaluate {
+                    from(components["release"])
+                }
+
+                // Добавляем pom-информацию (обязательно для JitPack)
+                pom {
+                    name.set("Pioneer Kotlin SDK")
+                    description.set("Kotlin SDK for GEOSCAN Pioneer Mini drone")
+                    url.set("https://github.com/NikoFan/pioneer-kotlin-sdk")
+                    licenses {
+                        license {
+                            name.set("MIT License")
+                            url.set("https://opensource.org/licenses/MIT")
+                        }
+                    }
+                    developers {
+                        developer {
+                            id.set("NikoFan")
+                            name.set("Oleg Nestruev")
+                        }
+                    }
+                    scm {
+                        connection.set("scm:git:github.com/NikoFan/pioneer-kotlin-sdk.git")
+                        developerConnection.set("scm:git:ssh://github.com/NikoFan/pioneer-kotlin-sdk.git")
+                        url.set("https://github.com/NikoFan/pioneer-kotlin-sdk")
+                    }
+                }
             }
         }
     }
