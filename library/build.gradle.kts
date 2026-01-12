@@ -62,7 +62,6 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 groupId = "com.github.NikoFan"
                 artifactId = "pioneer-kotlin-sdk"
-                version = "1.1.9"
 
                 from(components["release"]) // ← УБРАТЬ ВЛОЖЕННЫЙ afterEvaluate!
 
