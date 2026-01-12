@@ -46,19 +46,15 @@ android {
              version = "3.22.1"
          }
      }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
+
 }
-dependencies {
-    // ✅ ОСТАВЛЯЕМ ТОЛЬКО ЭТО:
-    // implementation("io.dronefleet.mavlink:mavlink:1.1.11")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 
-
-
-    // Тесты — можно оставить (опционально):
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-}
 
 afterEvaluate {
     publishing {
@@ -66,7 +62,7 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 groupId = "com.github.NikoFan"
                 artifactId = "pioneer-kotlin-sdk"
-                // version НЕ указываем — берётся из тега
+                version = "1.1.9"
 
                 from(components["release"]) // ← УБРАТЬ ВЛОЖЕННЫЙ afterEvaluate!
 
@@ -95,4 +91,17 @@ afterEvaluate {
             }
         }
     }
+}
+
+dependencies {
+    // ✅ ОСТАВЛЯЕМ ТОЛЬКО ЭТО:
+    // implementation("io.dronefleet.mavlink:mavlink:1.1.11")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+
+
+
+    // Тесты — можно оставить (опционально):
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 }
