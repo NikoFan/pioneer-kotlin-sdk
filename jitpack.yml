@@ -7,4 +7,4 @@ before_install:
   - sdk use java 17.0.12-oracle
 
 install:
-  - ./gradlew :library:assembleRelease
+  - ./gradlew :library:publishToMavenLocal
