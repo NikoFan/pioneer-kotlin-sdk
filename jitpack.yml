@@ -2,6 +2,7 @@ jdk:
   - openjdk17
 
 before_install:
+  - git submodule update --init --recursive  # ← ИНИЦИАЛИЗАЦИЯ ПОДМОДУЛЕЙ
   - sdk install java 17.0.10-open
   - sdk use java 17.0.10-open
 
