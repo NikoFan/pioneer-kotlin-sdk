@@ -5,6 +5,8 @@
 #include <string.h>
 #include <vector>
 #include <string>
+#include <thread>         // ← Добавлено для фонового потока
+#include <chrono>         // ← Добавлено для задержки
 #include "mavlink/common/mavlink.h"
 
 // Логгирование
@@ -16,6 +18,9 @@
 // Глобальные переменные для UDP-соединения
 static int sockfd = -1;
 static struct sockaddr_in dest_addr;
+
+// Флаг для управления фоновым потоком HEARTBEAT
+static bool heartbeat_running = false;
 
 // Вектор для хранения логов (максимум 100 сообщений)
 static std::vector<std::string> flight_logs;
@@ -31,7 +36,41 @@ void log_message(const char* msg) {
     flight_logs.push_back(std::string(msg));
 }
 
+/**
+ * Отправка HEARTBEAT — обязательна для GEOSCAN Pioneer Mini
+ * Без неё дрон игнорирует все команды!
+ */
+void send_heartbeat() {
+    if (sockfd == -1) return;
 
+    mavlink_message_t msg;
+    uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+
+    // GCS_HEARTBEAT: type=GCS, autopilot=INVALID
+    mavlink_msg_heartbeat_pack(
+            255, 0,                 // GCS system/component ID
+            &msg,
+            MAV_TYPE_GCS,           // Тип: наземная станция управления
+            MAV_AUTOPILOT_INVALID,  // Автопилот не используется
+            0, 0, 0                // base_mode, custom_mode, system_status
+    );
+
+    uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+    sendto(sockfd, buf, len, 0, (struct sockaddr*)&dest_addr, sizeof(dest_addr));
+    LOGD("HEARTBEAT отправлен");
+}
+
+/**
+ * Фоновый поток: отправляет HEARTBEAT каждую секунду
+ * Это критически важно для установления связи с дроном.
+ */
+void heartbeat_loop() {
+    while (heartbeat_running) {
+        send_heartbeat();
+        // Ждём 1 секунду перед следующей отправкой
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+}
 
 /**
  * JNI: инициализация соединения с дроном
@@ -42,7 +81,7 @@ Java_io_github_NikoFan_pioneer_internal_MavlinkConnectionNdk_initNative(
         JNIEnv *env, jobject thiz, jstring ip, jint port) {
     const char *ip_str = env->GetStringUTFChars(ip, nullptr);
 
-    // Создание UDP-сокет
+    // Создание UDP-сокета
     sockfd = socket(AF_INET, SOCK_DGRAM, 0);
     dest_addr.sin_family = AF_INET;
     dest_addr.sin_port = htons(port);
@@ -50,6 +89,26 @@ Java_io_github_NikoFan_pioneer_internal_MavlinkConnectionNdk_initNative(
 
     env->ReleaseStringUTFChars(ip, ip_str);
     log_message("UDP Соединение установлено");
+
+    // Запускаем фоновый поток для отправки HEARTBEAT
+    heartbeat_running = true;
+    std::thread(heartbeat_loop).detach(); // Отделяем поток — он работает сам
+}
+
+/**
+ * JNI: закрытие соединения
+ * Останавливает фоновый поток и закрывает сокет.
+ */
+extern "C" JNIEXPORT void JNICALL
+Java_io_github_NikoFan_pioneer_internal_MavlinkConnectionNdk_closeNative(
+        JNIEnv *env, jobject thiz) {
+    // Останавливаем фоновый поток
+    heartbeat_running = false;
+    if (sockfd != -1) {
+        close(sockfd);
+        sockfd = -1;
+    }
+    log_message("Соединение закрыто");
 }
 
 /**
@@ -65,7 +124,7 @@ bool send_command_long(uint8_t target_system, uint8_t target_component,
     mavlink_message_t msg;
     uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 
-    // Формирование команды
+    // Формирование команды через официальную функцию MAVLink
     mavlink_msg_command_long_pack(
             255, 0,                 // GCS system/component ID
             &msg,
@@ -76,17 +135,15 @@ bool send_command_long(uint8_t target_system, uint8_t target_component,
             param1, param2, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f
     );
 
-    // Конвертируем в байты и отправляем
     uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
 
-    // Логируем HEX
+    // Логируем HEX для отладки
     char hex_str[1024];
     char* p = hex_str;
     for (int i = 0; i < len; i++) {
         p += sprintf(p, "%02X ", buf[i]);
     }
     LOGD("Отправка команды %d: %s", command, hex_str);
-
 
     ssize_t sent = sendto(sockfd, buf, len, 0, (struct sockaddr*)&dest_addr, sizeof(dest_addr));
     if (sent != len) {
@@ -99,6 +156,7 @@ bool send_command_long(uint8_t target_system, uint8_t target_component,
 
 /**
  * JNI: запуск двигателей (ARM)
+ * Использует target_system=0, target_component=0 — как в официальном SDK.
  */
 extern "C" JNIEXPORT jboolean JNICALL
 Java_io_github_NikoFan_pioneer_internal_MavlinkConnectionNdk_arm(
@@ -121,6 +179,7 @@ Java_io_github_NikoFan_pioneer_internal_MavlinkConnectionNdk_disarm(
 
 /**
  * JNI: взлёт (TAKEOFF)
+ * Для навигационных команд используем target_system=1, target_component=1.
  */
 extern "C" JNIEXPORT jboolean JNICALL
 Java_io_github_NikoFan_pioneer_internal_MavlinkConnectionNdk_takeoff(
@@ -148,7 +207,6 @@ Java_io_github_NikoFan_pioneer_internal_MavlinkConnectionNdk_land(
 extern "C" JNIEXPORT jobjectArray JNICALL
 Java_io_github_NikoFan_pioneer_internal_MavlinkConnectionNdk_getFlightLogs(
         JNIEnv *env, jobject thiz) {
-    // Создаём массив Java-строк
     jclass stringClass = env->FindClass("java/lang/String");
     jobjectArray logs = env->NewObjectArray(flight_logs.size(), stringClass, nullptr);
 
