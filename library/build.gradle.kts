@@ -8,6 +8,8 @@ android {
     namespace = "io.github.NikoFan.pioneer"
     compileSdk = 36
 
+    buildToolsVersion = "34.0.0"
+
     defaultConfig {
         minSdk = 24
 
