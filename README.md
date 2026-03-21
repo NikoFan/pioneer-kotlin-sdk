@@ -33,7 +33,7 @@ dependencyResolutionManagement {
 ### 2. Добавьте зависимости в `build.gradle.kts`:
 ```kotlin
 dependencies {
-    implementation("com.github.NikoFan:pioneer-kotlin-sdk:1.1.7")
+    implementation("com.github.NikoFan:pioneer-kotlin-sdk:TAG")
 }
 ```
 
