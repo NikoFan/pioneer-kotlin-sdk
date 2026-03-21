@@ -27,13 +27,15 @@ dependencyResolutionManagement {
     repositories {
         maven { url = uri("https://jitpack.io") }
     }
-}```
+}
+```
 
 ### 2. Добавьте зависимости в `build.gradle.kts`:
 ```kotlin
 dependencies {
     implementation("com.github.NikoFan:pioneer-kotlin-sdk:1.1.7")
-}```
+}
+```
 
 
 ### Быстрый старт
@@ -53,7 +55,8 @@ fun startArmCommand(){
       Log.d("PIONEER-LOGS", pioneer.getLogs().joinToString("\n))
     }
   }
-}```
+}
+```
 
 ---
 ## Требования
