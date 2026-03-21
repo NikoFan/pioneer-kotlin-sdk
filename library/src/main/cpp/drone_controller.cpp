@@ -156,7 +156,7 @@ bool send_command_long(uint8_t target_system, uint8_t target_component,
 
 /**
  * JNI: запуск двигателей (ARM)
- * Использует target_system=0, target_component=0 — как в официальном SDK.
+ * Использует target_system=0, target_component=0
  */
 extern "C" JNIEXPORT jboolean JNICALL
 Java_io_github_NikoFan_pioneer_internal_MavlinkConnectionNdk_arm(
@@ -166,7 +166,7 @@ Java_io_github_NikoFan_pioneer_internal_MavlinkConnectionNdk_arm(
     return success ? JNI_TRUE : JNI_FALSE;
 }
 
-/**
+/**`
  * JNI: остановка двигателей (DISARM)
  */
 extern "C" JNIEXPORT jboolean JNICALL

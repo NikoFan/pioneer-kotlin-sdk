@@ -73,8 +73,8 @@ afterEvaluate {
                     url.set("https://github.com/NikoFan/pioneer-kotlin-sdk")
                     licenses {
                         license {
-                            name.set("MIT License")
-                            url.set("https://opensource.org/licenses/MIT")
+                            name.set("Apache License, Version 2.0")
+                            url.set("https://github.com/NikoFan/pioneer-kotlin-sdk/blob/master/LICENSE")
                         }
                     }
                     developers {

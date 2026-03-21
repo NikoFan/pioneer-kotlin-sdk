@@ -34,6 +34,7 @@ class MavlinkConnectionNdk(ip: String, port: Int) {
     private fun bytesToHex(bytes: ByteArray): String {
         return bytes.joinToString(" ") { "%02X".format(it) }
     }
+
     init {
         System.loadLibrary("drone_controller")
         closeNative()
