@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
 }
 
 android {
@@ -15,6 +16,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
+        compose = true
     }
 
     buildTypes {
@@ -38,14 +43,23 @@ android {
 }
 
 dependencies {
-    implementation(project(":library")) // твоя библиотека — отлично!
+    // implementation(project(":library"))
+    implementation("com.github.NikoFan:pioneer-kotlin-sdk:v1.2.7")
 
-    // Эти зависимости нужны, если ты делаешь UI на XML (Views):
+    implementation(platform("androidx.compose:compose-bom:2024.12.01"))
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.material3:material3")
+
+    implementation("androidx.activity:activity-compose:1.9.3")
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
 
-    // Обязательно добавь:
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
 
     // Тесты — можно оставить
